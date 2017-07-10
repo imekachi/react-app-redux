@@ -44,7 +44,7 @@ class App extends Component {
   componentWillMount() {
     // add event listeners
     TodoStore.on('change', this.getTodos)
-    console.log(`count listener: ${TodoStore.listenerCount('change')}`)
+    // console.log(`count listener: ${TodoStore.listenerCount('change')}`)
   }
 
   componentWillUnmount() {
