@@ -1,10 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import axios from 'axios'
-import { applyMiddleware, createStore } from 'redux'
 // import { applyMiddleware, combineReducers, createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
+// import promise from 'redux-promise-middleware'
 
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
@@ -57,7 +58,7 @@ const reducer = (state = initialSate, action) => {
     case 'FETCH_USERS_ERROR': {
       return { ...state, fetching: false, error: action.payload }
     }
-    case 'RECEIVE_USER': {
+    case 'RECEIVE_USERS': {
       return {
         ...state,
         fetching: false,
@@ -66,10 +67,9 @@ const reducer = (state = initialSate, action) => {
       }
     }
     default: {
-      break
+      return { ...state }
     }
   }
-  return state
 }
 // const reducers = combineReducers({
 //   user: userReducer,
@@ -88,7 +88,7 @@ const store = createStore(reducer, middleware)
 
 store.dispatch((dispatch) => {
   dispatch({ type: 'FETCH_USERS_START' })
-  axios.get('http://rest.learncode.academy/api/mekachi/users')
+  axios.get('http://rest.learncode.academy/api/wstern/users')
     .then((response) => {
       dispatch({ type: 'RECEIVE_USERS', payload: response.data })
     })
