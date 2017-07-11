@@ -5,7 +5,7 @@ import axios from 'axios'
 import { applyMiddleware, createStore } from 'redux'
 import { createLogger } from 'redux-logger'
 import thunk from 'redux-thunk'
-// import promise from 'redux-promise-middleware'
+import promise from 'redux-promise-middleware'
 
 import App from './App'
 import registerServiceWorker from './registerServiceWorker'
@@ -50,20 +50,20 @@ const initialSate = {
 }
 const reducer = (state = initialSate, action) => {
   switch (action.type) {
-    case 'FETCH_USERS_START': {
+    case 'FETCH_USERS_PENDING': {
       // this is equivalent to Object.assign({}, state, {fetching: true})
       // you don't mutate the state object
       return { ...state, fetching: true }
     }
-    case 'FETCH_USERS_ERROR': {
+    case 'FETCH_USERS_REJECTED': {
       return { ...state, fetching: false, error: action.payload }
     }
-    case 'RECEIVE_USERS': {
+    case 'FETCH_USERS_FULFILLED': {
       return {
         ...state,
         fetching: false,
         fetched: true,
-        users: action.payload,
+        users: action.payload.data,
       }
     }
     default: {
@@ -76,7 +76,7 @@ const reducer = (state = initialSate, action) => {
 //   fetch: fetchReducer,
 // })
 
-const middleware = applyMiddleware(thunk, createLogger())
+const middleware = applyMiddleware(promise(), thunk, createLogger())
 const store = createStore(reducer, middleware)
 
 // store.subscribe(() => {
@@ -85,17 +85,21 @@ const store = createStore(reducer, middleware)
 
 // store.dispatch({ type: 'CHANGE_NAME', payload: 'mek' })
 // store.dispatch({ type: 'CHANGE_AGE', payload: 25 })
-
-store.dispatch((dispatch) => {
-  dispatch({ type: 'FETCH_USERS_START' })
-  axios.get('http://rest.learncode.academy/api/wstern/users')
-    .then((response) => {
-      dispatch({ type: 'RECEIVE_USERS', payload: response.data })
-    })
-    .catch((err) => {
-      dispatch({ type: 'FETCH_USERS_ERROR', payload: err })
-    })
+store.dispatch({
+  type: 'FETCH_USERS', // required,
+  // return promise as the payload
+  payload: axios.get('http://rest.learncode.academy/api/wstern/users')
 })
+// store.dispatch((dispatch) => {
+//   dispatch({ type: 'FETCH_USERS_START' })
+//   axios.get('http://rest.learncode.academy/api/wstern/users')
+//     .then((response) => {
+//       dispatch({ type: 'RECEIVE_USERS', payload: response.data })
+//     })
+//     .catch((err) => {
+//       dispatch({ type: 'FETCH_USERS_ERROR', payload: err })
+//     })
+// })
 
 ReactDOM.render(<App />, document.getElementById('root'))
 registerServiceWorker()
