@@ -37,9 +37,7 @@ export default function userReducer(state = {
       }
     }
     default: {
-      break
+      return state
     }
   }
-
-  return state
 }

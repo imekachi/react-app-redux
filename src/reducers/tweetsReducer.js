@@ -46,9 +46,7 @@ export default function reducer(state = {
       }
     }
     default: {
-      break
+      return state
     }
   }
-
-  return state
 }
