@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 
 import styled, { ThemeProvider } from 'styled-components'
 import DemoHeader from './components/DemoHeader'
-import TodoInput from './components/TodoInput'
-import Todo from './components/Todo'
-import TodoStore from './stores/TodoStore'
+
+import { fetchUser } from './actions/userActions'
+import { fetchTweets } from './actions/tweetsActions'
 
 const Outer = styled.div`
   text-align: center;
@@ -14,50 +15,52 @@ const TodoWrapper = styled.div`
   max-width: 480px;
   margin: 20px auto;
 `
-const TodoList = styled.ul`
+
+const TweetsWrapper = styled.div`
   text-align: left;
-  padding: 0;
 `
 
 const theme = {
   // bg: 'papayawhip',
   // fg: 'tomato'
 }
-
+// /* Using decorator syntax */
+// @connect((store) => {
+//   return {
+//     user       : store.user.user,
+//     userFetched: store.user.fetched,
+//     tweets     : store.tweets.tweets,
+//   }
+// })
 class App extends Component {
+
   constructor() {
     super()
-
-    this.getTodos = this.getTodos.bind(this)
-    this.state = {
-      todos: TodoStore.getAll(),
-    }
+    this.fetchTweets = this.fetchTweets.bind(this)
   }
 
-  getTodos() {
-    this.setState({
-      todos: TodoStore.getAll(),
-    })
-  }
-
-  // Only happen once when this component is about to be rendered
   componentWillMount() {
-    // add event listeners
-    TodoStore.on('change', this.getTodos)
-    // console.log(`count listener: ${TodoStore.listenerCount('change')}`)
+    this.props.dispatch(fetchUser())
+    this.props.dispatch(fetchTweets())
   }
 
-  componentWillUnmount() {
-    // remove event listener to prevent memory leaks
-    TodoStore.removeListener('change', this.getTodos)
+  fetchTweets() {
+    console.log('load tweet clicked')
+    this.props.dispatch(fetchTweets())
   }
 
   render() {
-    const { todos } = this.state
+    const { user, tweets } = this.props
 
-    const TodoComponents = todos.map((todo) => {
-      return <Todo key={ todo.id } { ...todo } />
-    })
+    const Tweets = (() => {
+      if (tweets.length) {
+        return tweets.map((tweet) => {
+          return <li key={tweet.id}>{tweet.text}</li>
+        })
+      } else {
+        return <button onClick={this.fetchTweets}>loadtweet</button>
+      }
+    })()
 
     return (
       <Outer>
@@ -65,14 +68,20 @@ class App extends Component {
           <DemoHeader/>
         </ThemeProvider>
         <TodoWrapper>
-          <TodoList>
-            {TodoComponents}
-          </TodoList>
-          <TodoInput/>
+          <h1>{user.name}</h1>
+          <TweetsWrapper>
+            { Tweets }
+          </TweetsWrapper>
         </TodoWrapper>
       </Outer>
     )
   }
 }
 
-export default App
+export default connect((store) => {
+  return {
+    user       : store.user.user,
+    userFetched: store.user.fetched,
+    tweets     : store.tweets.tweets,
+  }
+})(App)
