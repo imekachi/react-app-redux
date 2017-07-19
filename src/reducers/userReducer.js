@@ -1,4 +1,6 @@
-export default function userReducer(state = {
+// USER REDUCER
+
+const storeTemplate = {
   user    : {
     id  : null,
     name: null,
@@ -7,15 +9,20 @@ export default function userReducer(state = {
   fetching: false,
   fetched : false,
   error   : null,
-}, action) {
+}
+
+export default function userReducer(state = storeTemplate, action) {
 
   switch (action.type) {
+
     case 'FETCH_USER': {
       return { ...state, fetching: true }
     }
+
     case 'FETCH_USER_REJECTED': {
       return { ...state, fetching: false, error: action.payload }
     }
+
     case 'FETCH_USER_FULFILLED': {
       return {
         ...state,
@@ -24,18 +31,21 @@ export default function userReducer(state = {
         user    : action.payload,
       }
     }
+
     case 'SET_USER_NAME': {
       return {
         ...state,
         user: { ...state.user, name: action.payload },
       }
     }
+
     case 'SET_USER_AGE': {
       return {
         ...state,
         user: { ...state.user, age: action.payload },
       }
     }
+
     default: {
       return state
     }

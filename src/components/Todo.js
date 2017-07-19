@@ -1,51 +1,46 @@
 import React from 'react'
 import styled from 'styled-components'
-import FontAwesome from 'react-fontawesome'
-import * as TodoActions from '../actions/TodoActions'
 
-const TodoItem = styled.li`
-  padding: 5px 0;
-  list-style: none;
-  
-  > label {
-    margin-left: 5px;
-  }
-  
-  &:hover > .fa {
-    opacity: 1;
+const TodoWrapper     = styled.li`
+  display: table;
+  width: 100%;
+  cursor: pointer;
+
+  &:nth-child(even) {
+    background-color: rgba(0,0,0,.03)
   }
 `
-
-const RemoveBtn = styled(FontAwesome)`
-  opacity: 0;
-  color: red;
-  margin: 0 5px;
-  cursor: pointer;
+const CheckboxWrapper = styled.span`
+  display: table-cell;
+  vertical-align: middle;
+  width: 1%;
+  padding: 0 10px;
+`
+const Label           = styled.label`
+  display: table-cell;
+  vertical-align: middle;
+  padding: 10px;
+  cursor: inherit;
 `
 
 export default class Todo extends React.Component {
 
-  constructor() {
-    super()
-
-    this.onRemoveClick = this.onRemoveClick.bind(this)
-  }
-
-  onRemoveClick() {
-    TodoActions.deleteTodo(this.props.id)
-  }
-
-  onCompleteTodo() {
-    // this.state.complete = true
+  handleOnClick(event) {
+      this.props.updateTodo(this.props.id, event.target.checked)
   }
 
   render() {
     return (
-      <TodoItem>
-        <input type="checkbox" id={this.props.id} checked={this.props.complete} onChange={this.onCompleteTodo}/>
-        <label htmlFor={this.props.id }>{this.props.text}</label>
-        <RemoveBtn name="remove" onClick={this.onRemoveClick}/>
-      </TodoItem>
+      <TodoWrapper isComplete={this.props.isComplete}>
+        <CheckboxWrapper>
+          <input type="checkbox"
+                 id={this.props.id}
+                 checked={this.props.isComplete}
+                 onChange={this.handleOnClick.bind(this)}
+          />
+        </CheckboxWrapper>
+        <Label htmlFor={this.props.id}>{this.props.text}</Label>
+      </TodoWrapper>
     )
   }
 }

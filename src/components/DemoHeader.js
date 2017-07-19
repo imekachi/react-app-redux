@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { keyframes } from 'styled-components'
-import logo from './logo.svg';
+import logo from '../images/logo.svg';
 
 
 const Header = styled.div`
@@ -28,6 +28,6 @@ export default () => (
   <Header>
     <Logo backwards src={logo} alt="logo" />
     <Logo src={logo} alt="logo" />
-    <h2>Welcome to React</h2>
+    <h2>Todos with Redux</h2>
   </Header>
 )
