@@ -26,8 +26,8 @@ injectGlobal`
 // 2. Inject store into Provider
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <App/>
   </Provider>
-  , document.getElementById('app-root')
+  , document.getElementById('app-root'),
 )
 registerServiceWorker()
